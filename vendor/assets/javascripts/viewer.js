@@ -17,7 +17,6 @@
 
 'use strict';
 
-var kDefaultURL = 'compressed.tracemonkey-pldi-09.pdf';
 var kDefaultScale = 'auto';
 var kDefaultScaleDelta = 1.1;
 var kUnknownScale = 0;
@@ -35,7 +34,16 @@ var RenderingStates = {
   FINISHED: 3
 };
 
-  PDFJS.workerSrc = '../build/pdf.js';
+  // !NOTE: PDF.JS is able to use a background "Web Worker"
+  // to crunch some numbers. We are disabling this functionality
+  // for the moment because pdf.js will be compiled with other
+  // application assets in the Asset Pipeline.
+  //
+  // It wouldn't be too much trouble to reenable it. We may
+  // revisit that later.
+  //
+  PDFJS.disableWorker = true;
+  // PDFJS.workerSrc = '/assets/pdf.js';
 
 var mozL10n = document.mozL10n || document.webL10n;
 
@@ -1839,8 +1847,6 @@ document.addEventListener('DOMContentLoaded', function webViewerLoad(evt) {
   PDFView.initialize();
   var params = PDFView.parseQueryString(document.location.search.substring(1));
 
-  var file = params.file || kDefaultURL;
-
   if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
     document.getElementById('openFile').setAttribute('hidden', 'true');
   } else {
@@ -2006,7 +2012,6 @@ document.addEventListener('DOMContentLoaded', function webViewerLoad(evt) {
       });
 
 
-  PDFView.open(file, 0);
 }, true);
 
 function updateViewarea() {
@@ -2290,4 +2295,3 @@ window.addEventListener('afterprint', function afterPrint(evt) {
   window.addEventListener('mozfullscreenchange', fullscreenChange, false);
   window.addEventListener('webkitfullscreenchange', fullscreenChange, false);
 })();
-
