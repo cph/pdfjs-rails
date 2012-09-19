@@ -2,8 +2,8 @@
 require File.expand_path('../lib/pdfjs-rails/version', __FILE__)
 
 Gem::Specification.new do |gem|
-  gem.authors       = ["Robert Lail"]
-  gem.email         = ["robert.lail@cph.org"]
+  gem.authors       = ["Robert Lail", "Luke Booth", "Gene Doyel", "Jesse Lewis"]
+  gem.email         = ["robert.lail@cph.org", "luke.booth@cph.org", "gene.doyel@cph.org", "jesse.lewis@cph.org"]
   gem.description   = %q{A gem for plugging pdf.js into a Rails application}
   gem.summary       = %q{A gem for plugging pdf.js into a Rails application}
   gem.homepage      = "https://github.com/concordia-publishing-house/pdfjs-rails"
