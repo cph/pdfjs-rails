@@ -3,7 +3,7 @@ module Pdfjs
   
     def pdf_viewer(filename)
       html = <<-HTML
-      <div id="outerContainer">
+      <div id="outerContainer" dir="ltr">
       
         <div id="sidebarContainer">
           <div id="toolbarSidebar" class="splitToolbarButton toggled">

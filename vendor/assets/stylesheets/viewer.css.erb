@@ -13,27 +13,7 @@
  * limitations under the License.
  */
 
-* {
-  padding: 0;
-  margin: 0;
-}
 
-html {
-  height: 100%;
-}
-
-body {
-  height: 100%;
-  background-color: #404040;
-  background-image: url(<%= asset_path 'texture.png' %>);
-}
-
-body,
-input,
-button,
-select {
-  font: message-box;
-}
 
 .hidden {
   display: none;
@@ -79,22 +59,22 @@ select {
 }
 
 /* outer/inner center provides horizontal center */
-html[dir='ltr'] .outerCenter {
+#outerContainer[dir='ltr'] .outerCenter {
   float: right;
   position: relative;
   right: 50%;
 }
-html[dir='rtl'] .outerCenter {
+#outerContainer[dir='rtl'] .outerCenter {
   float: left;
   position: relative;
   left: 50%;
 }
-html[dir='ltr'] .innerCenter {
+#outerContainer[dir='ltr'] .innerCenter {
   float: right;
   position: relative;
   right: -50%;
 }
-html[dir='rtl'] .innerCenter {
+#outerContainer[dir='rtl'] .innerCenter {
   float: left;
   position: relative;
   left: -50%;
@@ -103,6 +83,22 @@ html[dir='rtl'] .innerCenter {
 #outerContainer {
   width: 100%;
   height: 100%;
+  background-color: #404040;
+  background-image: url(<%= asset_path 'texture.png' %>);
+  position: relative;
+}
+
+/*#outerContainer * {
+  padding: 0;
+  margin: 0;
+}
+*/
+
+#outerContainer,
+#outerContainer input,
+#outerContainer button,
+#outerContainer select {
+  font: message-box;
 }
 
 #sidebarContainer {
@@ -123,7 +119,7 @@ html[dir='rtl'] .innerCenter {
   transition-timing-function: ease;
   
 }
-html[dir='ltr'] #sidebarContainer {
+#outerContainer[dir='ltr'] #sidebarContainer {
   -webkit-transition-property: left;
   -moz-transition-property: left;
   -ms-transition-property: left;
@@ -131,7 +127,7 @@ html[dir='ltr'] #sidebarContainer {
   transition-property: left;
   left: -200px;
 }
-html[dir='rtl'] #sidebarContainer {
+#outerContainer[dir='rtl'] #sidebarContainer {
   -webkit-transition-property: right;
   -ms-transition-property: right;
   -o-transition-property: right;
@@ -143,10 +139,10 @@ html[dir='rtl'] #sidebarContainer {
 #outerContainer.sidebarOpen > #sidebarContainer {
   visibility: visible;
 }
-html[dir='ltr'] #outerContainer.sidebarOpen > #sidebarContainer {
+#outerContainer[dir='ltr'].sidebarOpen > #sidebarContainer {
   left: 0px;
 }
-html[dir='rtl'] #outerContainer.sidebarOpen > #sidebarContainer {
+#outerContainer[dir='rtl'].sidebarOpen > #sidebarContainer {
   right: 0px;
 }
 
@@ -167,7 +163,7 @@ html[dir='rtl'] #outerContainer.sidebarOpen > #sidebarContainer {
   transition-duration: 200ms;
   transition-timing-function: ease;
 }
-html[dir='ltr'] #outerContainer.sidebarOpen > #mainContainer {
+#outerContainer[dir='ltr'].sidebarOpen > #mainContainer {
   -webkit-transition-property: left;
   -moz-transition-property: left;
   -ms-transition-property: left;
@@ -175,7 +171,7 @@ html[dir='ltr'] #outerContainer.sidebarOpen > #mainContainer {
   transition-property: left;
   left: 200px;
 }
-html[dir='rtl'] #outerContainer.sidebarOpen > #mainContainer {
+#outerContainer[dir='rtl'].sidebarOpen > #mainContainer {
   -webkit-transition-property: right;
   -moz-transition-property: right;
   -ms-transition-property: right;
@@ -194,10 +190,10 @@ html[dir='rtl'] #outerContainer.sidebarOpen > #mainContainer {
   background-color: hsla(0,0%,0%,.1);
   box-shadow: inset -1px 0 0 hsla(0,0%,0%,.25);
 }
-html[dir='ltr'] #sidebarContent {
+#outerContainer[dir='ltr'] #sidebarContent {
   left: 0;
 }
-html[dir='rtl'] #sidebarContent {
+#outerContainer[dir='rtl'] #sidebarContent {
   right: 0;
 }
 
@@ -265,50 +261,50 @@ html[dir='rtl'] #sidebarContent {
               0 1px 0 hsla(0,0%,0%,.15),
               0 1px 1px hsla(0,0%,0%,.1);
 }
-html[dir='ltr'] #toolbarViewerLeft {
+#outerContainer[dir='ltr'] #toolbarViewerLeft {
   margin-left: -1px;
 }
-html[dir='rtl'] #toolbarViewerRight {
+#outerContainer[dir='rtl'] #toolbarViewerRight {
   margin-left: -1px;
 }
 
 
-html[dir='ltr'] #toolbarViewerLeft,
-html[dir='rtl'] #toolbarViewerRight {
+#outerContainer[dir='ltr'] #toolbarViewerLeft,
+#outerContainer[dir='rtl'] #toolbarViewerRight {
   position: absolute;
   top: 0;
   left: 0;
 }
-html[dir='ltr'] #toolbarViewerRight,
-html[dir='rtl'] #toolbarViewerLeft {
+#outerContainer[dir='ltr'] #toolbarViewerRight,
+#outerContainer[dir='rtl'] #toolbarViewerLeft {
   position: absolute;
   top: 0;
   right: 0;
 }
-html[dir='ltr'] #toolbarViewerLeft > *,
-html[dir='ltr'] #toolbarViewerMiddle > *,
-html[dir='ltr'] #toolbarViewerRight > * {
+#outerContainer[dir='ltr'] #toolbarViewerLeft > *,
+#outerContainer[dir='ltr'] #toolbarViewerMiddle > *,
+#outerContainer[dir='ltr'] #toolbarViewerRight > * {
   float: left;
 }
-html[dir='rtl'] #toolbarViewerLeft > *,
-html[dir='rtl'] #toolbarViewerMiddle > *,
-html[dir='rtl'] #toolbarViewerRight > * {
+#outerContainer[dir='rtl'] #toolbarViewerLeft > *,
+#outerContainer[dir='rtl'] #toolbarViewerMiddle > *,
+#outerContainer[dir='rtl'] #toolbarViewerRight > * {
   float: right;
 }
 
-html[dir='ltr'] .splitToolbarButton {
+#outerContainer[dir='ltr'] .splitToolbarButton {
   margin: 3px 2px 4px 0;
   display: inline-block;
 }
-html[dir='rtl'] .splitToolbarButton {
+#outerContainer[dir='rtl'] .splitToolbarButton {
   margin: 3px 0 4px 2px;
   display: inline-block;
 }
-html[dir='ltr'] .splitToolbarButton > .toolbarButton {
+#outerContainer[dir='ltr'] .splitToolbarButton > .toolbarButton {
   border-radius: 0;
   float: left;
 }
-html[dir='rtl'] .splitToolbarButton > .toolbarButton {
+#outerContainer[dir='rtl'] .splitToolbarButton > .toolbarButton {
   border-radius: 0;
   float: right;
 }
@@ -383,8 +379,8 @@ html[dir='rtl'] .splitToolbarButton > .toolbarButton {
               0 0 1px hsla(0,0%,0%,.05);
   z-index: 199;
 }
-html[dir='ltr'] .splitToolbarButton > .toolbarButton:first-child,
-html[dir='rtl'] .splitToolbarButton > .toolbarButton:last-child {
+#outerContainer[dir='ltr'] .splitToolbarButton > .toolbarButton:first-child,
+#outerContainer[dir='rtl'] .splitToolbarButton > .toolbarButton:last-child {
   position: relative;
   margin: 0;
   margin-right: -1px;
@@ -392,8 +388,8 @@ html[dir='rtl'] .splitToolbarButton > .toolbarButton:last-child {
   border-bottom-left-radius: 2px;
   border-right-color: transparent;
 }
-html[dir='ltr'] .splitToolbarButton > .toolbarButton:last-child,
-html[dir='rtl'] .splitToolbarButton > .toolbarButton:first-child {
+#outerContainer[dir='ltr'] .splitToolbarButton > .toolbarButton:last-child,
+#outerContainer[dir='rtl'] .splitToolbarButton > .toolbarButton:first-child {
   position: relative;
   margin: 0;
   margin-left: -1px;
@@ -410,10 +406,10 @@ html[dir='rtl'] .splitToolbarButton > .toolbarButton:first-child {
   display: inline-block;
   margin: 5px 0;
 }
-html[dir='ltr'] .splitToolbarButtonSeparator {
+#outerContainer[dir='ltr'] .splitToolbarButtonSeparator {
   float:left;
 }
-html[dir='rtl'] .splitToolbarButtonSeparator {
+#outerContainer[dir='rtl'] .splitToolbarButtonSeparator {
   float:right;
 }
 .splitToolbarButton:hover > .splitToolbarButtonSeparator,
@@ -469,12 +465,12 @@ html[dir='rtl'] .splitToolbarButtonSeparator {
   transition-timing-function: ease;
 }
 
-html[dir='ltr'] .toolbarButton,
-html[dir='ltr'] .dropdownToolbarButton {
+#outerContainer[dir='ltr'] .toolbarButton,
+#outerContainer[dir='ltr'] .dropdownToolbarButton {
   margin: 3px 2px 4px 0;
 }
-html[dir='rtl'] .toolbarButton,
-html[dir='rtl'] .dropdownToolbarButton {
+#outerContainer[dir='rtl'] .toolbarButton,
+#outerContainer[dir='rtl'] .dropdownToolbarButton {
   margin: 3px 0 4px 2px;
 }
 
@@ -569,10 +565,10 @@ html[dir='rtl'] .dropdownToolbarButton {
   overflow: hidden;
   background: url(<%= asset_path 'toolbarButton-menuArrows.png' %>) no-repeat;
 }
-html[dir='ltr'] .dropdownToolbarButton {
+#outerContainer[dir='ltr'] .dropdownToolbarButton {
   background-position: 95%;
 }
-html[dir='rtl'] .dropdownToolbarButton {
+#outerContainer[dir='rtl'] .dropdownToolbarButton {
   background-position: 5%;
 }
 
@@ -600,16 +596,16 @@ html[dir='rtl'] .dropdownToolbarButton {
   border-bottom: 1px rgba(255, 255, 255, .5) solid;
 }
 
-html[dir='ltr'] .splitToolbarButton:first-child,
-html[dir='ltr'] .toolbarButton:first-child,
-html[dir='rtl'] .splitToolbarButton:last-child,
-html[dir='rtl'] .toolbarButton:last-child {
+#outerContainer[dir='ltr'] .splitToolbarButton:first-child,
+#outerContainer[dir='ltr'] .toolbarButton:first-child,
+#outerContainer[dir='rtl'] .splitToolbarButton:last-child,
+#outerContainer[dir='rtl'] .toolbarButton:last-child {
   margin-left: 4px;
 }
-html[dir='ltr'] .splitToolbarButton:last-child,
-html[dir='ltr'] .toolbarButton:last-child,
-html[dir='rtl'] .splitToolbarButton:first-child,
-html[dir='rtl'] .toolbarButton:first-child {
+#outerContainer[dir='ltr'] .splitToolbarButton:last-child,
+#outerContainer[dir='ltr'] .toolbarButton:last-child,
+#outerContainer[dir='rtl'] .splitToolbarButton:first-child,
+#outerContainer[dir='rtl'] .toolbarButton:first-child {
   margin-right: 4px;
 }
 
@@ -630,22 +626,22 @@ html[dir='rtl'] .toolbarButton:first-child {
   content: url(<%= asset_path 'toolbarButton-sidebarToggle.png' %>);
 }
     
-html[dir='ltr'] .toolbarButton.pageUp::before {
+#outerContainer[dir='ltr'] .toolbarButton.pageUp::before {
   display: inline-block;
   content: url(<%= asset_path 'toolbarButton-pageUp.png' %>);
 }
 
-html[dir='rtl'] .toolbarButton.pageUp::before {
+#outerContainer[dir='rtl'] .toolbarButton.pageUp::before {
   display: inline-block;
   content: url(<%= asset_path 'toolbarButton-pageUp-rtl.png' %>);
 }
     
-html[dir='ltr'] .toolbarButton.pageDown::before {
+#outerContainer[dir='ltr'] .toolbarButton.pageDown::before {
   display: inline-block;
   content: url(<%= asset_path 'toolbarButton-pageDown.png' %>);
 }
 
-html[dir='rtl'] .toolbarButton.pageDown::before {
+#outerContainer[dir='rtl'] .toolbarButton.pageDown::before {
   display: inline-block;
   content: url(<%= asset_path 'toolbarButton-pageDown-rtl.png' %>);
 }
@@ -1247,13 +1243,13 @@ canvas {
 }
 
 @media all and (max-width: 950px) {
-  html[dir='ltr'] #outerContainer.sidebarMoving .outerCenter,
-  html[dir='ltr'] #outerContainer.sidebarOpen .outerCenter {
+  #outerContainer[dir='ltr'].sidebarMoving .outerCenter,
+  #outerContainer[dir='ltr'].sidebarOpen .outerCenter {
     float: left;
     left: 180px;
   }
-  html[dir='rtl'] #outerContainer.sidebarMoving .outerCenter,
-  html[dir='rtl'] #outerContainer.sidebarOpen .outerCenter {
+  #outerContainer[dir='rtl'].sidebarMoving .outerCenter,
+  #outerContainer[dir='rtl'].sidebarOpen .outerCenter {
     float: right;
     right: 180px;
   }
@@ -1272,18 +1268,18 @@ canvas {
     top: 66px;
   }
 
-  html[dir='ltr'] #outerContainer.sidebarOpen > #mainContainer {
+  #outerContainer[dir='ltr'].sidebarOpen > #mainContainer {
     left: 0px;
   }
-  html[dir='rtl'] #outerContainer.sidebarOpen > #mainContainer {
+  #outerContainer[dir='rtl'].sidebarOpen > #mainContainer {
     right: 0px;
   }
 
-  html[dir='ltr'] .outerCenter {
+  #outerContainer[dir='ltr'] .outerCenter {
     float: left;
     left: 180px;
   }
-  html[dir='rtl'] .outerCenter {
+  #outerContainer[dir='rtl'] .outerCenter {
     float: right;
     right: 180px;
   }
