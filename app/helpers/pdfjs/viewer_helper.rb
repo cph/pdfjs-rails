@@ -1,7 +1,7 @@
 module Pdfjs
   module ViewerHelper
   
-    def pdf_viewer(filename)
+    def pdf_viewer(filename, options={})
       html = <<-HTML
       <div id="outerContainer" dir="ltr">
       
@@ -63,20 +63,20 @@ module Pdfjs
                   <button id="fullscreen" class="toolbarButton fullscreen" title="Fullscreen" tabindex="11" data-l10n-id="fullscreen">
                     <span data-l10n-id="fullscreen_label">Fullscreen</span>
                   </button>
-
-                  <button id="openFile" class="toolbarButton openFile" title="Open File" tabindex="12" data-l10n-id="open_file">
+                  
+                  
+                    <button id="openFile" class="toolbarButton openFile" title="Open File" tabindex="12" data-l10n-id="open_file">
                      <span data-l10n-id="open_file_label">Open</span>
-                  </button>
-
+                    </button>
+                  
                   <button id="print" class="toolbarButton print" title="Print" tabindex="13" data-l10n-id="print">
-                    <span data-l10n-id="print_label">Print</span>
-                  </button>
-
+                        <span data-l10n-id="print_label">Print</span>
+                      </button>
                   <button id="download" class="toolbarButton download" title="Download" tabindex="14" data-l10n-id="download">
                     <span data-l10n-id="download_label">Download</span>
                   </button>
                   <!-- <div class="toolbarButtonSpacer"></div> -->
-                  <a href="#" id="viewBookmark" class="toolbarButton bookmark" title="Current view (copy or open in new window)" tabindex="15" data-l10n-id="bookmark"><span data-l10n-id="bookmark_label">Current View</span></a>
+                  <a href="#" id="viewBookmark" class="toolbarButton bookmark" title="Get bookmark link" tabindex="15" data-l10n-id="bookmark"><span data-l10n-id="bookmark_label">Get bookmark link</span></a>
                 </div>
                 <div class="outerCenter">
                   <div class="innerCenter" id="toolbarViewerMiddle">

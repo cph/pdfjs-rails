@@ -7,7 +7,3 @@ module Pdfjs
     end
   end
 end
-
-# ActiveSupport.on_load(:action_view) do
-#   include Pdfjs::ViewerHelper
-# end
