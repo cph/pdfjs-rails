@@ -3,44 +3,50 @@ module Pdfjs
   
     def pdf_viewer(filename, options={})
       html = <<-HTML
-      <div id="outerContainer" dir="ltr">
-      
-        <div id="sidebarContainer">
-          <div id="toolbarSidebar" class="splitToolbarButton toggled">
-            <button id="viewThumbnail" class="toolbarButton group toggled" title="Show Thumbnails" tabindex="1" data-l10n-id="thumbs">
-               <span data-l10n-id="thumbs_label">Thumbnails</span>
-            </button>
-            <button id="viewOutline" class="toolbarButton group" title="Show Document Outline" tabindex="2" data-l10n-id="outline">
-               <span data-l10n-id="outline_label">Document Outline</span>
-            </button>
-            <button id="viewSearch" class="toolbarButton group hidden" title="Search Document" tabindex="3" data-l10n-id="search_panel">
-               <span data-l10n-id="search_panel_label">Search Document</span>
-            </button>
-          </div>
-          <div id="sidebarContent">
-            <div id="thumbnailView">
+        <div id="outerContainer" dir="ltr">
+          <div id="sidebarContainer">
+            <div id="toolbarSidebar" class="splitToolbarButton toggled">
+              <button id="viewThumbnail" class="toolbarButton group toggled" title="Show Thumbnails" tabindex="1" data-l10n-id="thumbs">
+                 <span data-l10n-id="thumbs_label">Thumbnails</span>
+              </button>
+              <button id="viewOutline" class="toolbarButton group" title="Show Document Outline" tabindex="2" data-l10n-id="outline">
+                 <span data-l10n-id="outline_label">Document Outline</span>
+              </button>
+              <button id="viewSearch" class="toolbarButton group hidden" title="Search Document" tabindex="3" data-l10n-id="search_panel">
+                 <span data-l10n-id="search_panel_label">Search Document</span>
+              </button>
             </div>
-            <div id="outlineView" class="hidden">
-            </div>
-            <div id="searchView" class="hidden">
-              <div id="searchToolbar">
-                <input id="searchTermsInput" class="toolbarField">
-                <button id="searchButton" class="textButton toolbarButton" data-l10n-id="search">Find</button>
+            <div id="sidebarContent">
+              <div id="thumbnailView">
               </div>
-              <div id="searchResults"></div>
+              <div id="outlineView" class="hidden">
+              </div>
+              <div id="searchView" class="hidden">
+                <div id="searchToolbar">
+                  <input id="searchTermsInput" class="toolbarField">
+                  <button id="searchButton" class="textButton toolbarButton" data-l10n-id="search">Find</button>
+                </div>
+                <div id="searchResults"></div>
+              </div>
             </div>
-          </div>
         </div>  <!-- sidebarContainer -->
-      
         <div id="mainContainer">
           <div class="toolbar">
             <div id="toolbarContainer">
             
               <div id="toolbarViewer">
                 <div id="toolbarViewerLeft">
-                  <button id="sidebarToggle" class="toolbarButton" title="Toggle Sidebar" tabindex="4" data-l10n-id="toggle_slider">
-                    <span data-l10n-id="toggle_slider_label">Toggle Sidebar</span>
-                  </button>
+                  HTML
+                  
+                  if options[:sidebar] || options[:sidebar].nil?
+                    html << <<-HTML
+                      <button id="sidebarToggle" class="toolbarButton" title="Toggle Sidebar" tabindex="4" data-l10n-id="toggle_slider">
+                        <span data-l10n-id="toggle_slider_label">Toggle Sidebar</span>
+                      </button>
+                    HTML
+                  end
+                  
+                  html << <<-HTML
                   <div class="toolbarButtonSpacer"></div>
                   <div class="splitToolbarButton">
                     <button class="toolbarButton pageUp" title="Previous Page" id="previous" tabindex="5" data-l10n-id="previous">

@@ -1914,15 +1914,17 @@ document.addEventListener('DOMContentLoaded', function webViewerLoad(evt) {
       outerContainer.classList.remove('sidebarMoving');
     }
   }, true);
-
-  document.getElementById('sidebarToggle').addEventListener('click',
-    function() {
-      this.classList.toggle('toggled');
-      outerContainer.classList.add('sidebarMoving');
-      outerContainer.classList.toggle('sidebarOpen');
-      PDFView.sidebarOpen = outerContainer.classList.contains('sidebarOpen');
-      PDFView.renderHighestPriority();
-    });
+  
+  if(document.getElementById('sidebarToggle') != undefined) {
+    document.getElementById('sidebarToggle').addEventListener('click',
+      function() {
+        this.classList.toggle('toggled');
+        outerContainer.classList.add('sidebarMoving');
+        outerContainer.classList.toggle('sidebarOpen');
+        PDFView.sidebarOpen = outerContainer.classList.contains('sidebarOpen');
+        PDFView.renderHighestPriority();
+      });
+  }
 
   document.getElementById('viewThumbnail').addEventListener('click',
     function() {
