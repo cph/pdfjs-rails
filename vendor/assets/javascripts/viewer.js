@@ -2022,6 +2022,11 @@ function updateViewarea() {
     return;
   var visible = PDFView.getVisiblePages();
   var visiblePages = visible.views;
+  
+  if (visiblePages.length == 0) {
+    alert('What? No pages. I totally expected there to be pages. Something\'s wrong and it\'s not in my function!!');
+    return;
+  }
 
   PDFView.renderHighestPriority();
 
