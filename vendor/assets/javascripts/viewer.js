@@ -227,7 +227,9 @@ var PDFView = {
   initialize: function pdfViewInitialize() {
     var container = this.container = document.getElementById('viewerContainer');
     this.pageViewScroll = {};
-    this.watchScroll(container, this.pageViewScroll, updateViewarea);
+    this.watchScroll(container, this.pageViewScroll, function() {
+      updateViewarea();
+    });
 
     var thumbnailContainer = this.thumbnailContainer =
                              document.getElementById('thumbnailView');
@@ -421,6 +423,11 @@ var PDFView = {
   },
 
   open: function pdfViewOpen(url, scale, password) {
+    if(PDFView.webViewerLoad) {
+      PDFView.webViewerLoad();
+      PDFView.webViewerLoad = null;
+    }
+    
     var parameters = {password: password};
     if (typeof url === 'string') { // URL
       this.setTitleUsingUrl(url);
@@ -1843,7 +1850,7 @@ var TextLayerBuilder = function textLayerBuilder(textLayerDiv) {
   };
 };
 
-document.addEventListener('DOMContentLoaded', function webViewerLoad(evt) {
+PDFView.webViewerLoad = function() {
   PDFView.initialize();
   var params = PDFView.parseQueryString(document.location.search.substring(1));
 
@@ -2013,20 +2020,24 @@ document.addEventListener('DOMContentLoaded', function webViewerLoad(evt) {
         PDFView.rotatePages(90);
       });
 
-
-}, true);
+};
 
 function updateViewarea() {
 
   if (!PDFView.initialized)
     return;
+  if (PDFView.loading)
+    return;
   var visible = PDFView.getVisiblePages();
   var visiblePages = visible.views;
   
-  if (visiblePages.length == 0) {
-    alert('What? No pages. I totally expected there to be pages. Something\'s wrong and it\'s not in my function!!');
-    return;
-  }
+  // if(PDFView.loading)
+  //   window.console.log('still loading!!');
+  // 
+  // if (visiblePages.length == 0) {
+  //   alert('What? No pages. I totally expected there to be pages. Something\'s wrong and it\'s not in my function!!');
+  //   return;
+  // }
 
   PDFView.renderHighestPriority();
 
