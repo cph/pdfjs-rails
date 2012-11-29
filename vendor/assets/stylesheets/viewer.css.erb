@@ -22,6 +22,11 @@
   display: none !important;
 }
 
+#scaleSelect {
+  height: 20px;
+  line-height: 20px;
+}
+
 #viewerContainer:-webkit-full-screen {
   top: 0px;
   border-top: 5px solid transparent;
@@ -207,7 +212,7 @@
   left: 0;
 }
 
-.toolbar {
+#toolbarViewer .toolbar {
   position: absolute;
   left: 0;
   right: 0;
@@ -308,7 +313,7 @@
   float: right;
 }
 
-.toolbarButton {
+#toolbarViewer .toolbarButton {
   border: 0 none;
   background-color: rgba(0, 0, 0, 0);
   width: 32px;
@@ -367,11 +372,11 @@
   transition-timing-function: ease;
 
 }
-.splitToolbarButton > .toolbarButton:hover,
-.splitToolbarButton > .toolbarButton:focus,
-.dropdownToolbarButton:hover,
-.toolbarButton.textButton:hover,
-.toolbarButton.textButton:focus {
+#toolbarViewer .splitToolbarButton > .toolbarButton:hover,
+#toolbarViewer .splitToolbarButton > .toolbarButton:focus,
+#toolbarViewer .dropdownToolbarButton:hover,
+#toolbarViewer .toolbarButton.textButton:hover,
+#toolbarViewer .toolbarButton.textButton:focus {
   background-color: hsla(0,0%,0%,.2);
   box-shadow: 0 1px 0 hsla(0,0%,100%,.05) inset,
               0 0 1px hsla(0,0%,100%,.15) inset,
@@ -433,8 +438,8 @@
   transition-timing-function: ease;
 }
 
-.toolbarButton,
-.dropdownToolbarButton {
+#toolbarViewer .toolbarButton,
+#toolbarViewer .dropdownToolbarButton {
   min-width: 16px;
   padding: 2px 6px 0;
   border: 1px solid transparent;
@@ -473,9 +478,9 @@
   margin: 3px 0 4px 2px;
 }
 
-.toolbarButton:hover,
-.toolbarButton:focus,
-.dropdownToolbarButton {
+#toolbarViewer .toolbarButton:hover,
+#toolbarViewer .toolbarButton:focus,
+#toolbarViewer .dropdownToolbarButton {
   background-color: hsla(0,0%,0%,.12);
   background-image: -webkit-linear-gradient(hsla(0,0%,100%,.05), hsla(0,0%,100%,0));
   background-image: -moz-linear-gradient(hsla(0,0%,100%,.05), hsla(0,0%,100%,0));
@@ -557,7 +562,7 @@
               0 1px 0 hsla(0,0%,100%,.05);
 }
 
-.dropdownToolbarButton {
+#toolbarViewer .dropdownToolbarButton {
   min-width: 120px;
   max-width: 120px;
   padding: 3px 2px 2px;
@@ -571,7 +576,7 @@
   background-position: 5%;
 }
 
-.dropdownToolbarButton > select {
+#toolbarViewer .dropdownToolbarButton > select {
   -webkit-appearance: none;
   -moz-appearance: none; /* in the future this might matter, see bugzilla bug #649849 */
   min-width: 140px;
@@ -583,7 +588,7 @@
   background: rgba(0,0,0,0); /* Opera does not support 'transparent' <select> background */
 }
 
-.dropdownToolbarButton > select > option {
+#toolbarViewer .dropdownToolbarButton > select > option {
   background: hsl(0,0%,24%);
 }
 
@@ -608,13 +613,13 @@
   margin-right: 4px;
 }
 
-.toolbarButtonSpacer {
+#toolbarViewer .toolbarButtonSpacer {
   width: 30px;
   display: inline-block;
   height: 1px;
 }
 
-.toolbarButtonFlexibleSpacer {
+#toolbarViewer .toolbarButtonFlexibleSpacer {
   -webkit-box-flex: 1;
   -moz-box-flex: 1;
   min-width: 30px;
@@ -645,37 +650,37 @@
   content: url(<%= asset_path 'toolbarButton-pageDown-rtl.png' %>);
 }
 
-.toolbarButton.zoomOut::before {
+#toolbarViewer .toolbarButton.zoomOut::before {
   display: inline-block;
   content: url(<%= asset_path 'toolbarButton-zoomOut.png' %>);
 }
     
-.toolbarButton.zoomIn::before {
+#toolbarViewer .toolbarButton.zoomIn::before {
   display: inline-block;
   content: url(<%= asset_path 'toolbarButton-zoomIn.png' %>);
 }
 
-.toolbarButton.fullscreen::before {
+#toolbarViewer .toolbarButton.fullscreen::before {
   display: inline-block;
   content: url(<%= asset_path 'toolbarButton-fullscreen.png' %>);
 }
 
-.toolbarButton.print::before {
+#toolbarViewer .toolbarButton.print::before {
   display: inline-block;
   content: url(<%= asset_path 'toolbarButton-print.png' %>);
 }
 
-.toolbarButton.openFile::before {
+#toolbarViewer .toolbarButton.openFile::before {
   display: inline-block;
   content: url(<%= asset_path 'toolbarButton-openFile.png' %>);
 }
 
-.toolbarButton.download::before {
+#toolbarViewer .toolbarButton.download::before {
   display: inline-block;
   content: url(<%= asset_path 'toolbarButton-download.png' %>);
 }
 
-.toolbarButton.bookmark {
+#toolbarViewer .toolbarButton.bookmark {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -683,7 +688,7 @@
   padding-top: 4px;
 }
 
-.toolbarButton.bookmark::before {
+#toolbarViewer .toolbarButton.bookmark::before {
   content: url(<%= asset_path 'toolbarButton-bookmark.png' %>);
 }
     
@@ -703,7 +708,7 @@
 }
 
 
-.toolbarField {
+#toolbarViewer .toolbarField {
   padding: 3px 6px;
   margin: 4px 0 4px 0;
   border: 1px solid transparent;
@@ -724,7 +729,7 @@
   -moz-transition-timing-function: ease;
 }
 
-.toolbarField.pageNumber {
+#toolbarViewer .toolbarField.pageNumber {
   min-width: 16px;
   text-align: right;
   width: 40px;
