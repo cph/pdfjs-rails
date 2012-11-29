@@ -411,15 +411,15 @@ var PDFView = {
     FirefoxCom.requestSync('initPassiveLoading', null);
   },
 
-  setTitleUsingUrl: function pdfViewSetTitleUsingUrl(url) {
+  setUrl: function pdfViewSetTitleUsingUrl(url) {
     this.url = url;
-    try {
-      document.title = decodeURIComponent(getFileName(url)) || url;
-    } catch (e) {
-      // decodeURIComponent may throw URIError,
-      // fall back to using the unprocessed url in that case
-      document.title = url;
-    }
+    // try {
+    //       document.title = decodeURIComponent(getFileName(url)) || url;
+    //     } catch (e) {
+    //       // decodeURIComponent may throw URIError,
+    //       // fall back to using the unprocessed url in that case
+    //       document.title = url;
+    //     }
   },
 
   open: function pdfViewOpen(url, scale, password) {
@@ -430,7 +430,7 @@ var PDFView = {
     
     var parameters = {password: password};
     if (typeof url === 'string') { // URL
-      this.setTitleUsingUrl(url);
+      this.setUrl(url);
       parameters.url = url;
     } else if (url && 'byteLength' in url) { // ArrayBuffer
       parameters.data = url;
@@ -718,8 +718,8 @@ var PDFView = {
       if (!pdfTitle && info && info['Title'])
         pdfTitle = info['Title'];
 
-      if (pdfTitle)
-        document.title = pdfTitle + ' - ' + document.title;
+      // if (pdfTitle)
+      //   document.title = pdfTitle + ' - ' + document.title;
     });
   },
 
@@ -2118,7 +2118,7 @@ window.addEventListener('change', function webViewerChange(evt) {
 
   var file = files[0];
   fileReader.readAsArrayBuffer(file);
-  PDFView.setTitleUsingUrl(file.name);
+  PDFView.setUrl(file.name);
 
   // URL does not reflect proper document location - hiding some icons.
   document.getElementById('viewBookmark').setAttribute('hidden', 'true');
