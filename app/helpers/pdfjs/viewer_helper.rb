@@ -1,7 +1,43 @@
 module Pdfjs
   module ViewerHelper
-  
+    EVERYTHING = [
+      :page_selector,
+      :sidebar,
+      :page_buttons,
+      :zoom_buttons,
+      :zoom_select,
+      :fullscreen,
+      :bookmark,
+      :open,
+      :download,
+      :print
+    ]
+    
+    DEFAULT = [
+      :page_buttons,
+      :zoom_buttons,
+      :zoom_select,
+      :fullscreen,
+      :download
+    ]
+    
+    MINIMAL = [
+      :page_buttons,
+      :zoom_buttons,
+      :download
+    ]
+    
     def pdf_viewer(filename, options={})
+      toolbar = options.fetch(:toolbar, :default)
+      
+      toolbar = case toolbar
+      when :everything; EVERYTHING
+      when :minimal; MINIMAL
+      else DEFAULT
+      end unless toolbar.is_a?(Array)
+      
+      can_display = lambda { |arg| toolbar.member?(arg) ? '' : ' hidden' }
+
       html = <<-HTML
         <div id="outerContainer" dir="ltr">
           <div id="sidebarContainer">
@@ -36,66 +72,58 @@ module Pdfjs
             
               <div id="toolbarViewer">
                 <div id="toolbarViewerLeft">
-                  HTML
-                  
-                  if options[:sidebar] || options[:sidebar].nil?
-                    html << <<-HTML
-                      <button id="sidebarToggle" class="toolbarButton" title="Toggle Sidebar" tabindex="4" data-l10n-id="toggle_slider">
+                      <button id="sidebarToggle" class="toolbarButton#{can_display[:sidebar]}" title="Toggle Sidebar" tabindex="4" data-l10n-id="toggle_slider">
                         <span data-l10n-id="toggle_slider_label">Toggle Sidebar</span>
                       </button>
-                    HTML
-                  end
-                  
-                  html << <<-HTML
-                  <div class="toolbarButtonSpacer"></div>
+                      <!-- <div class="toolbarButtonSpacer#{can_display[:sidebar]}"></div>-->
                   <div class="splitToolbarButton">
-                    <button class="toolbarButton pageUp" title="Previous Page" id="previous" tabindex="5" data-l10n-id="previous">
+                    <button class="toolbarButton pageUp#{can_display[:page_buttons]}" title="Previous Page" id="previous" tabindex="5" data-l10n-id="previous">
                       <span data-l10n-id="previous_label">Previous</span>
                     </button>
                     <div class="splitToolbarButtonSeparator"></div>
-                    <button class="toolbarButton pageDown" title="Next Page" id="next" tabindex="6" data-l10n-id="next">
+                    <button class="toolbarButton pageDown#{can_display[:page_buttons]}" title="Next Page" id="next" tabindex="6" data-l10n-id="next">
                       <span data-l10n-id="next_label">Next</span>
                     </button>
                   </div>
-                  <label id="pageNumberLabel" class="toolbarLabel" for="pageNumber" data-l10n-id="page_label">Page: </label>
-                  <input type="number" id="pageNumber" class="toolbarField pageNumber" value="1" size="4" min="1" tabindex="7">
+                  <label id="pageNumberLabel" class="toolbarLabel#{can_display[:page_selector]}" for="pageNumber" data-l10n-id="page_label">Page: </label>
+                  <input type="number" id="pageNumber" class="toolbarField pageNumber#{can_display[:page_selector]}" value="1" size="4" min="1" tabindex="7">
                   </input>
-                  <span id="numPages" class="toolbarLabel"></span>
+                  <span id="numPages" class="toolbarLabel#{can_display[:page_selector]}"></span>
                 </div>
                 <div id="toolbarViewerRight">
                   <input id="fileInput" class="fileInput" type="file" oncontextmenu="return false;" style="visibility: hidden; position: fixed; right: 0; top: 0" />
 
 
-                  <button id="fullscreen" class="toolbarButton fullscreen" title="Fullscreen" tabindex="11" data-l10n-id="fullscreen">
+                  <button id="fullscreen" class="toolbarButton fullscreen#{can_display[:fullscreen]}" title="Fullscreen" tabindex="11" data-l10n-id="fullscreen">
                     <span data-l10n-id="fullscreen_label">Fullscreen</span>
                   </button>
                   
                   
-                    <button id="openFile" class="toolbarButton openFile" title="Open File" tabindex="12" data-l10n-id="open_file">
+                    <button id="openFile" class="toolbarButton openFile#{can_display[:open]}" title="Open File" tabindex="12" data-l10n-id="open_file">
                      <span data-l10n-id="open_file_label">Open</span>
                     </button>
                   
-                  <button id="print" class="toolbarButton print" title="Print" tabindex="13" data-l10n-id="print">
+                  <button id="print" class="toolbarButton print#{can_display[:print]}" title="Print" tabindex="13" data-l10n-id="print">
                         <span data-l10n-id="print_label">Print</span>
                       </button>
-                  <button id="download" class="toolbarButton download" title="Download" tabindex="14" data-l10n-id="download">
+                  <button id="download" class="toolbarButton download#{can_display[:download]}" title="Download" tabindex="14" data-l10n-id="download">
                     <span data-l10n-id="download_label">Download</span>
                   </button>
                   <!-- <div class="toolbarButtonSpacer"></div> -->
-                  <a href="#" id="viewBookmark" class="toolbarButton bookmark" title="Get bookmark link" tabindex="15" data-l10n-id="bookmark"><span data-l10n-id="bookmark_label">Get bookmark link</span></a>
+                  <a href="#" id="viewBookmark" class="toolbarButton bookmark#{can_display[:bookmark]}" title="Get bookmark link" tabindex="15" data-l10n-id="bookmark"><span data-l10n-id="bookmark_label">Get bookmark link</span></a>
                 </div>
                 <div class="outerCenter">
                   <div class="innerCenter" id="toolbarViewerMiddle">
                     <div class="splitToolbarButton">
-                      <button class="toolbarButton zoomOut" title="Zoom Out" tabindex="8" data-l10n-id="zoom_out">
+                      <button class="toolbarButton zoomOut#{can_display[:zoom_buttons]}" title="Zoom Out" tabindex="8" data-l10n-id="zoom_out">
                         <span data-l10n-id="zoom_out_label">Zoom Out</span>
                       </button>
-                      <div class="splitToolbarButtonSeparator"></div>
-                      <button class="toolbarButton zoomIn" title="Zoom In" tabindex="9" data-l10n-id="zoom_in">
+                      <div class="splitToolbarButtonSeparator#{can_display[:zoom_buttons]}"></div>
+                      <button class="toolbarButton zoomIn#{can_display[:zoom_buttons]}" title="Zoom In" tabindex="9" data-l10n-id="zoom_in">
                         <span data-l10n-id="zoom_in_label">Zoom In</span>
                        </button>
                     </div>
-                    <span id="scaleSelectContainer" class="dropdownToolbarButton">
+                    <span id="scaleSelectContainer" class="dropdownToolbarButton#{can_display[:zoom_select]}">
                        <select id="scaleSelect" title="Zoom" oncontextmenu="return false;" tabindex="10" data-l10n-id="zoom">
                         <option id="pageAutoOption" value="auto" selected="selected" data-l10n-id="page_scale_auto">Automatic Zoom</option>
                         <option id="pageActualOption" value="page-actual" data-l10n-id="page_scale_actual">Actual Size</option>
