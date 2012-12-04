@@ -2241,7 +2241,7 @@ window.addEventListener('keydown', function keydown(evt) {
   // Some shortcuts should not get handled if a control/input element
   // is selected.
   var curElement = document.activeElement;
-  if (curElement && curElement.tagName == 'INPUT')
+  if (curElement && (curElement.tagName == 'INPUT' || curElement.tagName == 'TEXTAREA'))
     return;
   var controlsElement = document.getElementById('controls');
   while (curElement) {
