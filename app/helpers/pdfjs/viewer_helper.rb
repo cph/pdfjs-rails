@@ -39,7 +39,7 @@ module Pdfjs
       can_display = lambda { |arg| toolbar.member?(arg) ? '' : ' hidden' }
 
       html = <<-HTML
-        <div id="outerContainer" dir="ltr">
+        <div id="outerContainer" dir="ltr" data-pdf=#{filename.to_json}>
           <div id="sidebarContainer">
             <div id="toolbarSidebar" class="splitToolbarButton toggled">
               <button id="viewThumbnail" class="toolbarButton group toggled" title="Show Thumbnails" tabindex="1" data-l10n-id="thumbs">
