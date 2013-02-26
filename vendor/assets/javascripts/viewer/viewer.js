@@ -107,7 +107,7 @@ var PDFView = {
     this.watchScroll(container, this.pageViewScroll, function() {
       updateViewarea();
     });
-
+    
     this.thumbnailContainer = document.getElementById('thumbnailView');
     this.thumbnailViewScroll = {};
     if(this.thumbnailContainer) {
@@ -135,37 +135,36 @@ var PDFView = {
       callback();
     }, true);
   },
-
+  
   setScale: function pdfViewSetScale(val, resetAutoSettings, noScroll) {
     if (val == this.currentScale)
       return;
-
+    
     var pages = this.pages;
     for (var i = 0; i < pages.length; i++)
       pages[i].update(val * kCssUnits);
-
+    
     if (!noScroll && this.currentScale != val)
       this.pages[this.page - 1].scrollIntoView();
     this.currentScale = val;
-
+    
     var event = document.createEvent('UIEvents');
     event.initUIEvent('scalechange', false, false, window, 0);
     event.scale = val;
     event.resetAutoSettings = resetAutoSettings;
     window.dispatchEvent(event);
   },
-
+  
   parseScale: function pdfViewParseScale(value, resetAutoSettings, noScroll) {
-    if ('custom' == value)
-      return;
-
+    if('custom' == value) return;
+    
     var scale = parseFloat(value);
     this.currentScaleValue = value;
     if (scale) {
       this.setScale(scale, true, noScroll);
       return;
     }
-
+    
     var container = this.container;
     var currentPage = this.pages[this.page - 1];
     
@@ -191,28 +190,28 @@ var PDFView = {
         break;
     }
     this.setScale(scale, resetAutoSettings, noScroll);
-
+    
     selectScaleOption(value);
   },
-
+  
   zoomIn: function pdfViewZoomIn() {
     var newScale = (this.currentScale * kDefaultScaleDelta).toFixed(2);
     newScale = Math.min(kMaxScale, newScale);
     this.parseScale(newScale, true);
   },
-
+  
   zoomOut: function pdfViewZoomOut() {
     var newScale = (this.currentScale / kDefaultScaleDelta).toFixed(2);
     newScale = Math.max(kMinScale, newScale);
     this.parseScale(newScale, true);
   },
-
+  
   set page(val) {
     var pages = this.pages;
     var input = document.getElementById('pageNumber');
     var event = document.createEvent('UIEvents');
     event.initUIEvent('pagechange', false, false, window, 0);
-
+    
     if (!(0 < val && val <= pages.length)) {
       event.pageNumber = this.page;
       window.dispatchEvent(event);
@@ -226,12 +225,10 @@ var PDFView = {
     
     // checking if the this.page was called from the updateViewarea function:
     // avoiding the creation of two "set page" method (internal and public)
-    if (updateViewarea.inProgress)
-      return;
+    if (updateViewarea.inProgress) return;
     
     // Avoid scrolling the first page during loading
-    if (this.loading && val == 1)
-      return;
+    if (this.loading && val == 1) return;
     
     pages[val - 1].scrollIntoView();
   },
@@ -884,12 +881,12 @@ var PDFView = {
     }
     extractPageText(0);
   },
-
+  
   getVisiblePages: function pdfViewGetVisiblePages() {
     return this.getVisibleElements(this.container,
                                    this.pages, true);
   },
-
+  
   getVisibleThumbs: function pdfViewGetVisibleThumbs() {
     return this.getVisibleElements(this.thumbnailContainer,
                                    this.thumbnails);
@@ -918,10 +915,10 @@ var PDFView = {
         id: currentPage.id,
         view: currentPage
       });
-
+      
       return { first: currentPage, last: currentPage, views: visible};
     }
-
+    
     var bottom = top + scrollEl.clientHeight;
     var nextHeight, hidden, percent, viewHeight;
     for (; i <= ii && currentHeight < bottom; ++i) {
@@ -945,14 +942,14 @@ var PDFView = {
         var pc = a.percent - b.percent;
         if (Math.abs(pc) > 0.001)
           return -pc;
-
+        
         return a.id - b.id; // ensure stability
       });
     }
-
+    
     return {first: first, last: last, views: visible};
   },
-
+  
   // Helper function to parse query string (e.g. ?param1=value&parm2=...).
   parseQueryString: function pdfViewParseQueryString(query) {
     var parts = query.split('&');
@@ -965,7 +962,7 @@ var PDFView = {
     }
     return params;
   },
-
+  
   beforePrint: function pdfViewSetupBeforePrint() {
     if (!this.supportsPrinting) {
       var printMessage = mozL10n.get('printing_not_supported', null,
@@ -979,21 +976,18 @@ var PDFView = {
       this.pages[i].beforePrint();
     }
   },
-
+  
   afterPrint: function pdfViewSetupAfterPrint() {
     var div = document.getElementById('printContainer');
     while (div.hasChildNodes())
       div.removeChild(div.lastChild);
   },
-
+  
   fullscreen: function pdfViewFullscreen() {
-    var isFullscreen = document.fullscreen || document.mozFullScreen ||
-        document.webkitIsFullScreen;
-
-    if (isFullscreen) {
-      return false;
-    }
-
+    var isFullscreen = document.fullscreen || document.mozFullScreen || document.webkitIsFullScreen;
+    
+    if(isFullscreen) return false;
+    
     var wrapper = document.getElementById('viewerContainer');
     if (document.documentElement.requestFullScreen) {
       wrapper.requestFullScreen();
@@ -1004,20 +998,20 @@ var PDFView = {
     } else {
       return false;
     }
-
+    
     this.isFullscreen = true;
     var currentPage = this.pages[this.page - 1];
     this.previousScale = this.currentScaleValue;
     this.parseScale('page-fit', true);
-
+    
     // Wait for fullscreen to take effect
     setTimeout(function() {
       currentPage.scrollIntoView();
     }, 0);
-
+    
     return true;
   },
-
+  
   exitFullscreen: function pdfViewExitFullscreen() {
     this.isFullscreen = false;
     this.parseScale(this.previousScale);
@@ -1396,19 +1390,19 @@ PDFView.webViewerLoad = function() {
     var fileInput = document.getElementById('fileInput')
     if(fileInput) fileInput.value = null;
   }
-
+  
   // Special debugging flags in the hash section of the URL.
   var hash = document.location.hash.substring(1);
   var hashParams = PDFView.parseQueryString(hash);
-
+  
   if ('disableWorker' in hashParams)
     PDFJS.disableWorker = (hashParams['disableWorker'] === 'true');
-
+  
   var locale = navigator.language;
   if ('locale' in hashParams)
     locale = hashParams['locale'];
   mozL10n.language.code = locale;
-
+  
   if ('textLayer' in hashParams) {
     switch (hashParams['textLayer']) {
       case 'off':
@@ -1422,7 +1416,7 @@ PDFView.webViewerLoad = function() {
         break;
     }
   }
-
+  
   if ('pdfBug' in hashParams) {
     PDFJS.pdfBug = true;
     var pdfBug = hashParams['pdfBug'];
@@ -1430,18 +1424,17 @@ PDFView.webViewerLoad = function() {
     PDFBug.enable(enabled);
     PDFBug.init();
   }
-
-
+  
   if (!PDFView.supportsPrinting) {
     var printButton = document.getElementById('print');
     if(printButton) printButton.classList.add('hidden');
   }
-
+  
   if (!PDFView.supportsFullscreen) {
     var fullscreenButton = document.getElementById('fullscreen');
     if(fullscreenButton) fullscreenButton.classList.add('hidden');
   }
-
+  
   // Listen for warnings to trigger the fallback UI.  Errors should be caught
   // and call PDFView.error() so we don't need to listen for those.
   PDFJS.LogManager.addLogger({
@@ -1449,7 +1442,7 @@ PDFView.webViewerLoad = function() {
       PDFView.fallback();
     }
   });
-
+  
   var mainContainer = document.getElementById('mainContainer');
   var outerContainer = document.getElementById('outerContainer');
   mainContainer.addEventListener('transitionend', function(e) {
@@ -1584,27 +1577,17 @@ PDFView.webViewerLoad = function() {
 };
 
 function updateViewarea() {
-
-  if (!PDFView.initialized)
-    return;
-  if (PDFView.loading)
-    return;
+  if(!PDFView.initialized) return;
+  if(PDFView.loading) return;
+  
   var visible = PDFView.getVisiblePages();
   var visiblePages = visible.views;
   
-  // if(PDFView.loading)
-  //   window.console.log('still loading!!');
-  // 
-  // if (visiblePages.length == 0) {
-  //   alert('What? No pages. I totally expected there to be pages. Something\'s wrong and it\'s not in my function!!');
-  //   return;
-  // }
-
   PDFView.renderHighestPriority();
-
+  
   var currentId = PDFView.page;
   var firstPage = visible.first;
-
+  
   for(var i=0, ii=visiblePages.length, stillFullyVisible=false; i < ii; ++i) {
     var page = visiblePages[i];
     
@@ -1777,7 +1760,7 @@ window.addEventListener('pagechange', function pagechange(evt) {
 window.addEventListener('DOMMouseScroll', function(evt) {
   if (evt.ctrlKey) {
     evt.preventDefault();
-
+    
     var ticks = evt.detail;
     var direction = (ticks > 0) ? 'zoomOut' : 'zoomIn';
     for (var i = 0, length = Math.abs(ticks); i < length; i++)
@@ -1814,12 +1797,12 @@ window.addEventListener('keydown', function keydown(evt) {
         break;
     }
   }
-
+  
   if (handled) {
     evt.preventDefault();
     return;
   }
-
+  
   // Some shortcuts should not get handled if a control/input element
   // is selected.
   var curElement = document.activeElement;
@@ -1831,7 +1814,7 @@ window.addEventListener('keydown', function keydown(evt) {
       return; // ignoring if the 'controls' element is focused
     curElement = curElement.parentNode;
   }
-
+  
   if (cmd == 0) { // no control key pressed at all.
     switch (evt.keyCode) {
       case 37: // left arrow
@@ -1855,7 +1838,7 @@ window.addEventListener('keydown', function keydown(evt) {
         break;
     }
   }
-
+  
   if (handled) {
     evt.preventDefault();
   }
@@ -1871,14 +1854,13 @@ window.addEventListener('afterprint', function afterPrint(evt) {
 
 (function fullscreenClosure() {
   function fullscreenChange(e) {
-    var isFullscreen = document.fullscreen || document.mozFullScreen ||
-        document.webkitIsFullScreen;
-
+    var isFullscreen = document.fullscreen || document.mozFullScreen || document.webkitIsFullScreen;
+    
     if (!isFullscreen) {
       PDFView.exitFullscreen();
     }
   }
-
+  
   window.addEventListener('fullscreenchange', fullscreenChange, false);
   window.addEventListener('mozfullscreenchange', fullscreenChange, false);
   window.addEventListener('webkitfullscreenchange', fullscreenChange, false);
