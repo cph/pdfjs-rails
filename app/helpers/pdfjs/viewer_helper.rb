@@ -144,13 +144,6 @@ module Pdfjs
             </div>
           </div>
 
-          <menu type="context" id="viewerContextMenu">
-            <menuitem label="Rotate Counter-Clockwise" id="page_rotate_ccw"
-                      data-l10n-id="page_rotate_ccw" ></menuitem>
-            <menuitem label="Rotate Clockwise" id="page_rotate_cw"
-                      data-l10n-id="page_rotate_cw" ></menuitem>
-          </menu>
-
           <div id="viewerContainer">
             <div id="viewer" contextmenu="viewerContextMenu"></div>
           </div>

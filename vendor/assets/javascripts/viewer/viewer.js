@@ -166,7 +166,7 @@ var PDFView = {
     
     if(currentPage == null)
       return;
-
+    
     var pageWidthScale = (container.clientWidth - kScrollbarPadding) /
                           currentPage.width * currentPage.scale / kCssUnits;
     var pageHeightScale = (container.clientHeight - kScrollbarPadding) /
@@ -1012,32 +1012,6 @@ var PDFView = {
     this.isFullscreen = false;
     this.parseScale(this.previousScale);
     this.page = this.page;
-  },
-
-  rotatePages: function pdfViewPageRotation(delta) {
-
-    this.pageRotation = (this.pageRotation + 360 + delta) % 360;
-
-    for (var i = 0, l = this.pages.length; i < l; i++) {
-      var page = this.pages[i];
-      page.update(page.scale, this.pageRotation);
-    }
-
-    for (var i = 0, l = this.thumbnails.length; i < l; i++) {
-      var thumb = this.thumbnails[i];
-      thumb.updateRotation(this.pageRotation);
-    }
-
-    var currentPage = this.pages[this.page - 1];
-
-    this.parseScale(this.currentScaleValue, true);
-
-    this.renderHighestPriority();
-
-    // Wait for fullscreen to take effect
-    setTimeout(function() {
-      currentPage.scrollIntoView();
-    }, 0);
   }
 };
 
@@ -1046,7 +1020,6 @@ var PageView = function pageView(container, pdfPage, id, scale,
   this.id = id;
   this.pdfPage = pdfPage;
 
-  this.rotation = 0;
   this.scale = scale || 1.0;
   this.viewport = this.pdfPage.getViewport(this.scale, this.pdfPage.rotate);
 
@@ -1070,17 +1043,13 @@ var PageView = function pageView(container, pdfPage, id, scale,
     this.pdfPage.destroy();
   };
 
-  this.update = function pageViewUpdate(scale, rotation) {
+  this.update = function pageViewUpdate(scale) {
     this.renderingState = RenderingStates.INITIAL;
     this.resume = null;
 
-    if (typeof rotation !== 'undefined') {
-      this.rotation = rotation;
-    }
-
     this.scale = scale || this.scale;
 
-    var totalRotation = (this.rotation + this.pdfPage.rotate) % 360;
+    var totalRotation = (this.pdfPage.rotate) % 360;
     var viewport = this.pdfPage.getViewport(this.scale, totalRotation);
 
     this.viewport = viewport;
@@ -1440,29 +1409,6 @@ var ThumbnailView = function thumbnailView(container, pdfPage, id) {
 
   this.hasImage = false;
   this.renderingState = RenderingStates.INITIAL;
-
-  this.updateRotation = function(rot) {
-
-    rotation = rot;
-    totalRotation = (rotation + pdfPage.rotate) % 360;
-    viewport = pdfPage.getViewport(1, totalRotation);
-    pageWidth = this.width = viewport.width;
-    pageHeight = this.height = viewport.height;
-    pageRatio = pageWidth / pageHeight;
-
-    canvasHeight = canvasWidth / this.width * this.height;
-    scaleX = this.scaleX = (canvasWidth / pageWidth);
-    scaleY = this.scaleY = (canvasHeight / pageHeight);
-
-    div.removeAttribute('data-loaded');
-    ring.textContent = '';
-    ring.style.width = canvasWidth + 'px';
-    ring.style.height = canvasHeight + 'px';
-
-    this.hasImage = false;
-    this.renderingState = RenderingStates.INITIAL;
-    this.resume = null;
-  }
 
   function getPageDrawContext() {
     var canvas = document.createElement('canvas');
@@ -1886,16 +1832,6 @@ PDFView.webViewerLoad = function() {
       PDFView.parseScale(this.value);
     });
 
-  document.getElementById('page_rotate_ccw').addEventListener('click',
-      function() {
-        PDFView.rotatePages(-90);
-      });
-
-  document.getElementById('page_rotate_cw').addEventListener('click',
-      function() {
-        PDFView.rotatePages(90);
-      });
-
 };
 
 function updateViewarea() {
@@ -2146,18 +2082,6 @@ window.addEventListener('keydown', function keydown(evt) {
           PDFView.page++;
           handled = true;
         }
-        break;
-
-      case 82: // 'r'
-        PDFView.rotatePages(90);
-        break;
-    }
-  }
-
-  if (cmd == 4) { // shift-key
-    switch (evt.keyCode) {
-      case 82: // 'r'
-        PDFView.rotatePages(-90);
         break;
     }
   }
