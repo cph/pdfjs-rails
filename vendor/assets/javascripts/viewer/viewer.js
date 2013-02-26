@@ -117,7 +117,7 @@ var PDFView = {
     
     this.initialized = true;
   },
-
+  
   // Helper function to keep track whether a div was scrolled up or down and
   // then call a callback.
   watchScroll: function pdfViewWatchScroll(viewAreaElement, state, callback) {
@@ -525,7 +525,7 @@ var PDFView = {
     var container = document.getElementById('viewer');
     while (container.hasChildNodes())
       container.removeChild(container.lastChild);
-
+    
     var pagesCount = pdfDocument.numPages;
     var id = pdfDocument.fingerprint;
     var storedHash = null;
@@ -556,9 +556,11 @@ var PDFView = {
     this.startedTextExtraction = false;
     var pagesRefMap = {};
     var thumbnails = this.thumbnails = [];
+    
     var pagePromises = [];
-    for (var i = 1; i <= pagesCount; i++)
+    for(var i = 1; i <= pagesCount; i++)
       pagePromises.push(pdfDocument.getPage(i));
+    
     var self = this;
     var pagesPromise = PDFJS.Promise.all(pagePromises);
     pagesPromise.then(function(promisedPages) {
@@ -619,13 +621,17 @@ var PDFView = {
     // updated if the zoom level stayed the same.
     this.currentScale = 0;
     this.currentScaleValue = null;
-    if (this.initialBookmark) {
+    if(this.initialBookmark) {
+      if(window.console && window.console.log) window.console.log('[setInitialView] setBookmark: ' + this.initialBookmark);
       this.setHash(this.initialBookmark);
       this.initialBookmark = null;
     }
     else if(storedHash && this.rememberViewState) {
+      if(window.console && window.console.log) window.console.log('[setInitialView] setHash: ' + storedHash);
       this.setHash(storedHash);
-    else if (scale) {
+    }
+    else if(scale) {
+      if(window.console && window.console.log) window.console.log('[setInitialView] parseScale: ' + scale);
       this.parseScale(scale, true);
       this.page = 1;
     }
@@ -633,6 +639,7 @@ var PDFView = {
     if (PDFView.currentScale === kUnknownScale) {
       // Scale was not initialized: invalid bookmark or scale was not specified.
       // Setting the default one.
+      if(window.console && window.console.log) window.console.log('[setInitialView] parseScale (default: ' + kDefaultScale + ')');
       this.parseScale(kDefaultScale, true);
     }
   },
@@ -1262,8 +1269,7 @@ function updateViewarea() {
   
   var currentScale = PDFView.currentScale;
   var currentScaleValue = PDFView.currentScaleValue;
-  var normalizedScaleValue = currentScaleValue == currentScale ?
-    currentScale * 100 : currentScaleValue;
+  var normalizedScaleValue = currentScaleValue == currentScale ? currentScale * 100 : currentScaleValue;
   
   var pageNumber = firstPage.id;
   var pdfOpenParams = '#page=' + pageNumber + '&zoom=' + normalizedScaleValue;
@@ -1358,12 +1364,12 @@ window.addEventListener('scalechange', function scalechange(evt) {
   if(customScaleOption) {
     customScaleOption.selected = false;
     
-    if (!evt.resetAutoSettings &&
-         (document.getElementById('pageWidthOption').selected ||
-          document.getElementById('pageFitOption').selected ||
-          document.getElementById('pageAutoOption').selected)) {
-        updateViewarea();
-        return;
+    if(!evt.resetAutoSettings &&
+       (document.getElementById('pageWidthOption').selected ||
+        document.getElementById('pageFitOption').selected ||
+        document.getElementById('pageAutoOption').selected)) {
+      updateViewarea();
+      return;
     }
     
     var predefinedValueFound = selectScaleOption('' + evt.scale);
@@ -1480,7 +1486,7 @@ window.addEventListener('keydown', function keydown(evt) {
         PDFView.page++;
         handled = true;
         break;
-
+      
       case 32: // spacebar
         if (PDFView.isFullscreen) {
           PDFView.page++;
