@@ -297,13 +297,17 @@ var PDFView = {
     //     }
   },
   
-  open: function pdfViewOpen(url, scale, password) {
+  open: function pdfViewOpen(url, scale, options) {
     if(PDFView.webViewerLoad) {
       PDFView.webViewerLoad();
       PDFView.webViewerLoad = null;
     }
     
-    var parameters = {password: password};
+    var _ref;
+    options = options || {};
+    this.useHotkeys = (_ref = options.useHotkeys) != null ? _ref : true;
+    
+    var parameters = {password: options.password};
     if (typeof url === 'string') { // URL
       this.setUrl(url);
       parameters.url = url;
@@ -1418,7 +1422,9 @@ window.addEventListener('keydown', function keydown(evt) {
             (evt.altKey ? 2 : 0) |
             (evt.shiftKey ? 4 : 0) |
             (evt.metaKey ? 8 : 0);
-
+  
+  if(!PDFView.useHotkeys) return;
+  
   // First, handle the key bindings that are independent whether an input
   // control is selected or not.
   if (cmd == 1 || cmd == 8) { // either CTRL or META key.
