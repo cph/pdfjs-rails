@@ -297,7 +297,7 @@ var PDFView = {
     //     }
   },
   
-  open: function pdfViewOpen(url, scale, options) {
+  open: function pdfViewOpen(url, options) {
     if(PDFView.webViewerLoad) {
       PDFView.webViewerLoad();
       PDFView.webViewerLoad = null;
@@ -305,7 +305,9 @@ var PDFView = {
     
     var _ref;
     options = options || {};
+    var scale = (_ref = options.scale) != null ? _ref : 0;
     this.useHotkeys = (_ref = options.useHotkeys) != null ? _ref : true;
+    this.rememberViewState = (_ref = options.rememberViewState) != null ? _ref : true;
     
     var parameters = {password: options.password};
     if (typeof url === 'string') { // URL
@@ -621,7 +623,7 @@ var PDFView = {
       this.setHash(this.initialBookmark);
       this.initialBookmark = null;
     }
-    else if (storedHash)
+    else if(storedHash && this.rememberViewState) {
       this.setHash(storedHash);
     else if (scale) {
       this.parseScale(scale, true);
