@@ -349,6 +349,8 @@ var PDFView = {
         self.progress(progressData.loaded / progressData.total);
       }
     );
+    
+    return this;
   },
   
   download: function pdfViewDownload() {
