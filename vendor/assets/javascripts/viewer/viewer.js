@@ -351,21 +351,21 @@ var PDFView = {
       }
     );
   },
-
+  
   download: function pdfViewDownload() {
     function noData() {
       FirefoxCom.request('download', { originalUrl: url });
     }
-
+    
     var url = this.url.split('#')[0];
     url += '#pdfjs.action=download';
     window.open(url, '_parent');
   },
-
+  
   fallback: function pdfViewFallback() {
     return;
   },
-
+  
   navigateTo: function pdfViewNavigateTo(dest) {
     if (typeof dest === 'string')
       dest = this.destinations[dest];
@@ -449,7 +449,7 @@ var PDFView = {
         }
       }
     }
-
+    
     var loadingBox = document.getElementById('loadingBox');
     loadingBox.setAttribute('hidden', 'true');
 
@@ -613,14 +613,14 @@ var PDFView = {
       this.parseScale(scale, true);
       this.page = 1;
     }
-
+    
     if (PDFView.currentScale === kUnknownScale) {
       // Scale was not initialized: invalid bookmark or scale was not specified.
       // Setting the default one.
       this.parseScale(kDefaultScale, true);
     }
   },
-
+  
   renderHighestPriority: function pdfViewRenderHighestPriority() {
     // Pages have a higher priority than thumbnails, so check them first.
     var visiblePages = this.getVisiblePages();
@@ -640,7 +640,7 @@ var PDFView = {
         this.renderView(thumbView, 'thumbnail');
     }
   },
-
+  
   getHighestPriority: function pdfViewGetHighestPriority(visible, views,
                                                          scrolledDown) {
     // The state has changed figure out which page has the highest priority to
@@ -650,7 +650,7 @@ var PDFView = {
     // 2 if last scrolled down page after the visible pages
     // 2 if last scrolled up page before the visible pages
     var visibleViews = visible.views;
-
+    
     var numVisible = visibleViews.length;
     if (numVisible === 0) {
       return false;
@@ -660,7 +660,7 @@ var PDFView = {
       if (!this.isViewFinished(view))
         return view;
     }
-
+    
     // All the visible views have rendered, try to render next/previous pages.
     if (scrolledDown) {
       var nextPageIndex = visible.last.id;
@@ -676,7 +676,7 @@ var PDFView = {
     // Everything that needs to be rendered has been.
     return false;
   },
-
+  
   isViewFinished: function pdfViewNeedsRendering(view) {
     return view.renderingState === RenderingStates.FINISHED;
   },
@@ -702,7 +702,7 @@ var PDFView = {
     }
     return true;
   },
-
+  
   search: function pdfViewStartSearch() {
     // Limit this function to run every <SEARCH_TIMEOUT>ms.
     var SEARCH_TIMEOUT = 250;
@@ -720,7 +720,7 @@ var PDFView = {
     }
     this.searchTimer = null;
     this.lastSearch = now;
-
+    
     function bindLink(link, pageNumber) {
       link.href = '#' + pageNumber;
       link.onclick = function searchBindLink() {
@@ -728,18 +728,18 @@ var PDFView = {
         return false;
       };
     }
-
+    
     var searchResults = document.getElementById('searchResults');
-
+    
     var searchTermsInput = document.getElementById('searchTermsInput');
     searchResults.removeAttribute('hidden');
     searchResults.textContent = '';
-
+    
     var terms = searchTermsInput.value;
-
+    
     if (!terms)
       return;
-
+    
     // simple search: removing spaces and hyphens, then scanning every
     terms = terms.replace(/\s-/g, '').toLowerCase();
     var index = PDFView.pageText;
@@ -756,7 +756,7 @@ var PDFView = {
       bindLink(link, pageNumber);
       link.textContent = 'Page ' + pageNumber + ': ' + textSample;
       searchResults.appendChild(link);
-
+      
       pageFound = true;
     }
     if (!pageFound) {
@@ -768,11 +768,11 @@ var PDFView = {
       searchResults.appendChild(noResults);
     }
   },
-
+  
   setHash: function pdfViewSetHash(hash) {
     if (!hash)
       return;
-
+    
     if (hash.indexOf('=') >= 0) {
       var params = PDFView.parseQueryString(hash);
       // borrowing syntax from "Parameters for Opening PDF Files"
@@ -792,7 +792,7 @@ var PDFView = {
           var zoomArgNumber = parseFloat(zoomArg);
           if (zoomArgNumber)
             zoomArg = zoomArgNumber / 100;
-
+          
           var dest = [null, {name: 'XYZ'}, (zoomArgs[1] | 0),
             (zoomArgs[2] | 0), zoomArg];
           var currentPage = this.pages[pageNumber - 1];
@@ -806,16 +806,16 @@ var PDFView = {
     else // named destination
       PDFView.navigateTo(unescape(hash));
   },
-
+  
   switchSidebarView: function pdfViewSwitchSidebarView(view) {
     var thumbsView = document.getElementById('thumbnailView');
     var outlineView = document.getElementById('outlineView');
     var searchView = document.getElementById('searchView');
-
+    
     var thumbsButton = document.getElementById('viewThumbnail');
     var outlineButton = document.getElementById('viewOutline');
     var searchButton = document.getElementById('viewSearch');
-
+    
     switch (view) {
       case 'thumbs':
         thumbsButton.classList.add('toggled');
@@ -824,10 +824,10 @@ var PDFView = {
         thumbsView.classList.remove('hidden');
         outlineView.classList.add('hidden');
         searchView.classList.add('hidden');
-
+        
         PDFView.renderHighestPriority();
         break;
-
+        
       case 'outline':
         thumbsButton.classList.remove('toggled');
         outlineButton.classList.add('toggled');
@@ -835,11 +835,11 @@ var PDFView = {
         thumbsView.classList.add('hidden');
         outlineView.classList.remove('hidden');
         searchView.classList.add('hidden');
-
+        
         if (outlineButton.getAttribute('disabled'))
           return;
         break;
-
+        
       case 'search':
         thumbsButton.classList.remove('toggled');
         outlineButton.classList.remove('toggled');
@@ -847,7 +847,7 @@ var PDFView = {
         thumbsView.classList.add('hidden');
         outlineView.classList.add('hidden');
         searchView.classList.remove('hidden');
-
+        
         var searchTermsInput = document.getElementById('searchTermsInput');
         searchTermsInput.focus();
         // Start text extraction as soon as the search gets displayed.
@@ -855,7 +855,7 @@ var PDFView = {
         break;
     }
   },
-
+  
   extractText: function() {
     if (this.startedTextExtraction)
       return;
@@ -1561,10 +1561,10 @@ function updateViewarea() {
   for (var i = 0, ii = visiblePages.length, stillFullyVisible = false;
        i < ii; ++i) {
     var page = visiblePages[i];
-
+    
     if (page.percent < 100)
       break;
-
+    
     if (page.id === PDFView.page) {
       stillFullyVisible = true;
       break;
@@ -1580,12 +1580,12 @@ function updateViewarea() {
     PDFView.page = currentId;
     updateViewarea.inProgress = false;
   }
-
+  
   var currentScale = PDFView.currentScale;
   var currentScaleValue = PDFView.currentScaleValue;
   var normalizedScaleValue = currentScaleValue == currentScale ?
     currentScale * 100 : currentScaleValue;
-
+  
   var pageNumber = firstPage.id;
   var pdfOpenParams = '#page=' + pageNumber;
   pdfOpenParams += '&zoom=' + normalizedScaleValue;
@@ -1593,7 +1593,7 @@ function updateViewarea() {
   var topLeft = currentPage.getPagePoint(PDFView.container.scrollLeft,
     (PDFView.container.scrollTop - firstPage.y));
   pdfOpenParams += ',' + Math.round(topLeft[0]) + ',' + Math.round(topLeft[1]);
-
+  
   var store = PDFView.store;
   store.set('exists', true);
   store.set('page', pageNumber);
