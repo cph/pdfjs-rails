@@ -490,13 +490,6 @@ var PDFView = {
   },
 
   load: function pdfViewLoad(pdfDocument, scale) {
-    function bindOnAfterDraw(pageView, thumbnailView) {
-      // when page is painted, using the image as thumbnail base
-      pageView.onAfterDraw = function pdfViewLoadOnAfterDraw() {
-        thumbnailView.setImage(pageView.canvas);
-      };
-    }
-
     this.pdfDocument = pdfDocument;
 
     var errorWrapper = document.getElementById('errorWrapper');
@@ -552,13 +545,15 @@ var PDFView = {
     pagesPromise.then(function(promisedPages) {
       for (var i = 1; i <= pagesCount; i++) {
         var page = promisedPages[i - 1];
-        var pageView = new PageView(container, page, i, scale,
-                                    page.stats, self.navigateTo.bind(self));
-        var thumbnailView = new ThumbnailView(thumbsView, page, i);
-        bindOnAfterDraw(pageView, thumbnailView);
-
+        var pageView = new PageView(container, page, i, scale, page.stats, self.navigateTo.bind(self));
+        
+        if(thumbsView) {
+          var thumbnailView = new ThumbnailView(thumbsView, page, i);
+          thumbnailView.bindOnAfterDraw(pageView);
+          thumbnails.push(thumbnailView);
+        }
+        
         pages.push(pageView);
-        thumbnails.push(thumbnailView);
         var pageRef = page.ref;
         pagesRefMap[pageRef.num + ' ' + pageRef.gen + ' R'] = i;
       }
@@ -572,11 +567,15 @@ var PDFView = {
     });
 
     // outline and initial view depends on destinations and pagesRefMap
+    var outlineView = document.getElementById('outlineView');
+    
     PDFJS.Promise.all([pagesPromise, destinationsPromise]).then(function() {
-      pdfDocument.getOutline().then(function(outline) {
-        self.outline = new DocumentOutlineView(outline);
-      });
-
+      if(outlineView) {
+        pdfDocument.getOutline().then(function(outline) {
+          self.outline = new DocumentOutlineView(outlineView, outline);
+        });
+      }
+      
       self.setInitialView(storedHash, scale);
     });
 
@@ -1372,305 +1371,8 @@ var PageView = function pageView(container, pdfPage, id, scale,
   };
 };
 
-var ThumbnailView = function thumbnailView(container, pdfPage, id) {
-  var anchor = document.createElement('a');
-  anchor.href = PDFView.getAnchorUrl('#page=' + id);
-  anchor.title = mozL10n.get('thumb_page_title', {page: id}, 'Page {{page}}');
-  anchor.onclick = function stopNavigation() {
-    PDFView.page = id;
-    return false;
-  };
 
-  var rotation = 0;
-  var totalRotation = (rotation + pdfPage.rotate) % 360;
-  var viewport = pdfPage.getViewport(1, totalRotation);
-  var pageWidth = this.width = viewport.width;
-  var pageHeight = this.height = viewport.height;
-  var pageRatio = pageWidth / pageHeight;
-  this.id = id;
 
-  var canvasWidth = 98;
-  var canvasHeight = canvasWidth / this.width * this.height;
-  var scaleX = this.scaleX = (canvasWidth / pageWidth);
-  var scaleY = this.scaleY = (canvasHeight / pageHeight);
-
-  var div = this.el = document.createElement('div');
-  div.id = 'thumbnailContainer' + id;
-  div.className = 'thumbnail';
-
-  var ring = document.createElement('div');
-  ring.className = 'thumbnailSelectionRing';
-  ring.style.width = canvasWidth + 'px';
-  ring.style.height = canvasHeight + 'px';
-
-  div.appendChild(ring);
-  anchor.appendChild(div);
-  container.appendChild(anchor);
-
-  this.hasImage = false;
-  this.renderingState = RenderingStates.INITIAL;
-
-  function getPageDrawContext() {
-    var canvas = document.createElement('canvas');
-    canvas.id = 'thumbnail' + id;
-    canvas.mozOpaque = true;
-
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
-    canvas.className = 'thumbnailImage';
-    canvas.setAttribute('aria-label', mozL10n.get('thumb_page_canvas',
-      {page: id}, 'Thumbnail of Page {{page}}'));
-
-    div.setAttribute('data-loaded', true);
-
-    ring.appendChild(canvas);
-
-    var ctx = canvas.getContext('2d');
-    ctx.save();
-    ctx.fillStyle = 'rgb(255, 255, 255)';
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-    ctx.restore();
-    return ctx;
-  }
-
-  this.drawingRequired = function thumbnailViewDrawingRequired() {
-    return !this.hasImage;
-  };
-
-  this.draw = function thumbnailViewDraw(callback) {
-    if (this.renderingState !== RenderingStates.INITIAL)
-      error('Must be in new state before drawing');
-
-    this.renderingState = RenderingStates.RUNNING;
-    if (this.hasImage) {
-      callback();
-      return;
-    }
-
-    var self = this;
-    var ctx = getPageDrawContext();
-    var drawViewport = pdfPage.getViewport(scaleX, totalRotation);
-    var renderContext = {
-      canvasContext: ctx,
-      viewport: drawViewport,
-      continueCallback: function(cont) {
-        if (PDFView.highestPriorityPage !== 'thumbnail' + self.id) {
-          self.renderingState = RenderingStates.PAUSED;
-          self.resume = function() {
-            self.renderingState = RenderingStates.RUNNING;
-            cont();
-          };
-          return;
-        }
-        cont();
-      }
-    };
-    pdfPage.render(renderContext).then(
-      function pdfPageRenderCallback() {
-        self.renderingState = RenderingStates.FINISHED;
-        callback();
-      },
-      function pdfPageRenderError(error) {
-        self.renderingState = RenderingStates.FINISHED;
-        callback();
-      }
-    );
-    this.hasImage = true;
-  };
-
-  this.setImage = function thumbnailViewSetImage(img) {
-    if (this.hasImage || !img)
-      return;
-    this.renderingState = RenderingStates.FINISHED;
-    var ctx = getPageDrawContext();
-    ctx.drawImage(img, 0, 0, img.width, img.height,
-                  0, 0, ctx.canvas.width, ctx.canvas.height);
-
-    this.hasImage = true;
-  };
-};
-
-var DocumentOutlineView = function documentOutlineView(outline) {
-  var outlineView = document.getElementById('outlineView');
-  while (outlineView.firstChild)
-    outlineView.removeChild(outlineView.firstChild);
-
-  function bindItemLink(domObj, item) {
-    domObj.href = PDFView.getDestinationHash(item.dest);
-    domObj.onclick = function documentOutlineViewOnclick(e) {
-      PDFView.navigateTo(item.dest);
-      return false;
-    };
-  }
-
-  if (!outline) {
-    var noOutline = document.createElement('div');
-    noOutline.classList.add('noOutline');
-    noOutline.textContent = mozL10n.get('no_outline', null,
-      'No Outline Available');
-    outlineView.appendChild(noOutline);
-    return;
-  }
-
-  var queue = [{parent: outlineView, items: outline}];
-  while (queue.length > 0) {
-    var levelData = queue.shift();
-    var i, n = levelData.items.length;
-    for (i = 0; i < n; i++) {
-      var item = levelData.items[i];
-      var div = document.createElement('div');
-      div.className = 'outlineItem';
-      var a = document.createElement('a');
-      bindItemLink(a, item);
-      a.textContent = item.title;
-      div.appendChild(a);
-
-      if (item.items.length > 0) {
-        var itemsDiv = document.createElement('div');
-        itemsDiv.className = 'outlineItems';
-        div.appendChild(itemsDiv);
-        queue.push({parent: itemsDiv, items: item.items});
-      }
-
-      levelData.parent.appendChild(div);
-    }
-  }
-};
-
-// optimised CSS custom property getter/setter
-var CustomStyle = (function CustomStyleClosure() {
-
-  // As noted on: http://www.zachstronaut.com/posts/2009/02/17/
-  //              animate-css-transforms-firefox-webkit.html
-  // in some versions of IE9 it is critical that ms appear in this list
-  // before Moz
-  var prefixes = ['ms', 'Moz', 'Webkit', 'O'];
-  var _cache = { };
-
-  function CustomStyle() {
-  }
-
-  CustomStyle.getProp = function get(propName, element) {
-    // check cache only when no element is given
-    if (arguments.length == 1 && typeof _cache[propName] == 'string') {
-      return _cache[propName];
-    }
-
-    element = element || document.documentElement;
-    var style = element.style, prefixed, uPropName;
-
-    // test standard property first
-    if (typeof style[propName] == 'string') {
-      return (_cache[propName] = propName);
-    }
-
-    // capitalize
-    uPropName = propName.charAt(0).toUpperCase() + propName.slice(1);
-
-    // test vendor specific properties
-    for (var i = 0, l = prefixes.length; i < l; i++) {
-      prefixed = prefixes[i] + uPropName;
-      if (typeof style[prefixed] == 'string') {
-        return (_cache[propName] = prefixed);
-      }
-    }
-
-    //if all fails then set to undefined
-    return (_cache[propName] = 'undefined');
-  };
-
-  CustomStyle.setProp = function set(propName, element, str) {
-    var prop = this.getProp(propName);
-    if (prop != 'undefined')
-      element.style[prop] = str;
-  };
-
-  return CustomStyle;
-})();
-
-var TextLayerBuilder = function textLayerBuilder(textLayerDiv) {
-  this.textLayerDiv = textLayerDiv;
-
-  this.beginLayout = function textLayerBuilderBeginLayout() {
-    this.textDivs = [];
-    this.textLayerQueue = [];
-  };
-
-  this.endLayout = function textLayerBuilderEndLayout() {
-    var self = this;
-    var textDivs = this.textDivs;
-    var textLayerDiv = this.textLayerDiv;
-    var renderTimer = null;
-    var renderingDone = false;
-    var renderInterval = 0;
-    var resumeInterval = 500; // in ms
-
-    var canvas = document.createElement('canvas');
-    var ctx = canvas.getContext('2d');
-
-    // Render the text layer, one div at a time
-    function renderTextLayer() {
-      if (textDivs.length === 0) {
-        clearInterval(renderTimer);
-        renderingDone = true;
-        self.textLayerDiv = textLayerDiv = canvas = ctx = null;
-        return;
-      }
-      var textDiv = textDivs.shift();
-      textLayerDiv.appendChild(textDiv);
-
-      ctx.font = textDiv.style.fontSize + ' ' + textDiv.style.fontFamily;
-      var width = ctx.measureText(textDiv.textContent).width;
-
-      if (width > 0) {
-        var textScale = textDiv.dataset.canvasWidth / width;
-
-        CustomStyle.setProp('transform' , textDiv,
-          'scale(' + textScale + ', 1)');
-        CustomStyle.setProp('transformOrigin' , textDiv, '0% 0%');
-      }
-    }
-    renderTimer = setInterval(renderTextLayer, renderInterval);
-
-    // Stop rendering when user scrolls. Resume after XXX milliseconds
-    // of no scroll events
-    var scrollTimer = null;
-    function textLayerOnScroll() {
-      if (renderingDone) {
-        window.removeEventListener('scroll', textLayerOnScroll, false);
-        return;
-      }
-
-      // Immediately pause rendering
-      clearInterval(renderTimer);
-
-      clearTimeout(scrollTimer);
-      scrollTimer = setTimeout(function textLayerScrollTimer() {
-        // Resume rendering
-        renderTimer = setInterval(renderTextLayer, renderInterval);
-      }, resumeInterval);
-    } // textLayerOnScroll
-
-    window.addEventListener('scroll', textLayerOnScroll, false);
-  }; // endLayout
-
-  this.appendText = function textLayerBuilderAppendText(text,
-                                                        fontName, fontSize) {
-    var textDiv = document.createElement('div');
-
-    // vScale and hScale already contain the scaling to pixel units
-    var fontHeight = fontSize * text.geom.vScale;
-    textDiv.dataset.canvasWidth = text.canvasWidth * text.geom.hScale;
-
-    textDiv.style.fontSize = fontHeight + 'px';
-    textDiv.style.fontFamily = fontName;
-    textDiv.style.left = text.geom.x + 'px';
-    textDiv.style.top = (text.geom.y - fontHeight) + 'px';
-    textDiv.textContent = PDFJS.bidi(text, -1);
-    textDiv.dir = text.direction;
-    this.textDivs.push(textDiv);
-  };
-};
 
 PDFView.webViewerLoad = function() {
   PDFView.initialize();
