@@ -1055,10 +1055,11 @@ PDFView.webViewerLoad = function() {
   if ('disableWorker' in hashParams)
     PDFJS.disableWorker = (hashParams['disableWorker'] === 'true');
   
-  var locale = navigator.language;
-  if ('locale' in hashParams)
-    locale = hashParams['locale'];
-  mozL10n.language.code = locale;
+  // NOTE: mozL10n.language doesn't have a 'code' property
+  // var locale = navigator.language;
+  // if ('locale' in hashParams)
+  //   locale = hashParams['locale'];
+  // mozL10n.language.code = locale;
   
   if ('textLayer' in hashParams) {
     switch (hashParams['textLayer']) {
