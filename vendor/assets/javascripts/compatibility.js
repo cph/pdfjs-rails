@@ -55,8 +55,14 @@
       result = [];
       for (var i = 0; i < arg1; ++i)
         result[i] = 0;
-    } else
+    } else if ('slice' in arg1) {
       result = arg1.slice(0);
+    } else {
+      result = [];
+      for (var i = 0, n = arg1.length; i < n; ++i) {
+        result[i] = arg1[i];
+      }
+    }
 
     result.subarray = subarray;
     result.buffer = result;
@@ -384,7 +390,8 @@
   if (!('console' in window)) {
     window.console = {
       log: function() {},
-      error: function() {}
+      error: function() {},
+      warn: function() {}
     };
   } else if (!('bind' in console.log)) {
     // native functions in IE9 might not have bind
@@ -394,6 +401,9 @@
     console.error = (function(fn) {
       return function(msg) { return fn(msg); };
     })(console.error);
+    console.warn = (function(fn) {
+      return function(msg) { return fn(msg); };
+    })(console.warn);
   }
 })();
 
