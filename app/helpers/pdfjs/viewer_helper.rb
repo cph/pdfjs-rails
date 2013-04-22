@@ -39,7 +39,7 @@ module Pdfjs
       can_display = lambda { |arg| toolbar.member?(arg) ? '' : ' hidden' }
 
       html = <<-HTML
-        <div id="outerContainer" dir="ltr">
+        <div id="outerContainer" dir="ltr" data-pdf=#{filename.to_json}>
           <div id="sidebarContainer">
             <div id="toolbarSidebar" class="splitToolbarButton toggled">
               <button id="viewThumbnail" class="toolbarButton group toggled" title="Show Thumbnails" tabindex="1" data-l10n-id="thumbs">
@@ -144,13 +144,6 @@ module Pdfjs
             </div>
           </div>
 
-          <menu type="context" id="viewerContextMenu">
-            <menuitem label="Rotate Counter-Clockwise" id="page_rotate_ccw"
-                      data-l10n-id="page_rotate_ccw" ></menuitem>
-            <menuitem label="Rotate Clockwise" id="page_rotate_cw"
-                      data-l10n-id="page_rotate_cw" ></menuitem>
-          </menu>
-
           <div id="viewerContainer">
             <div id="viewer" contextmenu="viewerContextMenu"></div>
           </div>
@@ -184,7 +177,7 @@ module Pdfjs
     
       <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function() {
-          PDFView.open(#{filename.to_json}, 0);
+          PDFView.open(#{filename.to_json});
         }, true);
       </script>
       HTML
