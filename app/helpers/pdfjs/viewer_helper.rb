@@ -177,10 +177,7 @@ module Pdfjs
     
       <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function() {
-          var PDFView = PDFView || {}
-          if (PDFView.open) {
-            PDFView.open(#{filename.to_json});
-          }
+          PDFView.open(#{filename.to_json});
         }, true);
       </script>
       HTML
